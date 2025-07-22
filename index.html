@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>外国人材紹介サービス 料金プラン</title>
+    <!-- Chart.jsとTailwind CSS、Google Fontsを読み込み -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 日本語フォントとベースのフォントを設定 */
+        body {
+            font-family: 'Noto Sans JP', 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* メインコンテナをA4横の比率に近づけ、中央に配置 */
+        .main-container {
+            width: 100%;
+            max-width: 1123px; /* A4 landscape width at 96 DPI */
+            margin: auto;
+        }
+        /* ステップ間のコネクター（線）のスタイル */
+        .step-connector {
+            background-color: #60a5fa; /* blue-400 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 sm:p-8">
+
+    <div class="main-container bg-white shadow-xl rounded-xl p-6 sm:p-10">
+        <!-- ヘッダーエリア -->
+        <header class="text-center mb-10 md:mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">外国人材紹介サービス 料金プラン</h1>
+            <p class="mt-3 text-base md:text-lg text-gray-600">まとめてのご紹介で、一人あたりの費用がぐっとお得になります。</p>
+        </header>
+
+        <!-- メインコンテンツ: 料金ステップ -->
+        <main>
+            <!-- ステップ表示コンテナ -->
+            <div id="steps-container" class="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0 mb-12 md:mb-16">
+                <!-- JavaScriptによってステップが動的に挿入されます -->
+            </div>
+
+            <!-- グラフと補足情報エリア -->
+            <div class="grid md:grid-cols-5 gap-8 items-start">
+                <!-- 折れ線グラフエリア -->
+                <div class="md:col-span-3 bg-gray-50 p-6 rounded-lg border">
+                    <h3 class="text-xl font-bold text-gray-700 mb-5">1人あたりの料金推移</h3>
+                    <div id="chart-container">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                </div>
+                <!-- 補足情報と連絡先エリア -->
+                <div class="md:col-span-2 bg-blue-50 p-6 rounded-lg border border-blue-200">
+                     <h3 class="text-xl font-bold text-blue-800 mb-4">プランに関するご案内</h3>
+                     <ul class="space-y-2 text-gray-700 list-disc list-inside">
+                        <li>上記はすべて税抜価格です。</li>
+                        <li>ご契約後の返金規定については、担当者までお問い合わせください。</li>
+                        <li>8名様以上のご紹介をご希望の場合は、別途お見積りいたします。</li>
+                     </ul>
+                     <div class="mt-6 border-t border-blue-200 pt-4">
+                         <p class="font-bold text-gray-800">株式会社カスタマーグループ</p>
+                         <p class="text-gray-600">TEL: 06-6253-8617</p>
+                         <p class="text-gray-600">Email: k.suzaki@customergroup.jp</p>
+                         <p class="text-gray-600">Web: https://customergroup.net/</p>
+                     </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 料金データとアイコン（SVG）
+        const pricingData = [
+            { people: 1, total: 20, icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>' },
+            { people: 2, total: 35, icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" /></svg>' },
+            { people: 3, total: 45, icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" /></svg>' },
+            { people: 4, total: 58, icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>' },
+            { people: 5, total: 61, icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2" /></svg>' },
+            { people: 6, total: 71, icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>' },
+            { people: 7, total: 81, icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>' }
+        ];
+
+        const stepsContainer = document.getElementById('steps-container');
+
+        // ページの読み込みが完了したら処理を実行
+        window.addEventListener('load', () => {
+            // ステップを生成
+            pricingData.forEach((data, index) => {
+                const perPersonCost = data.total / data.people;
+                const isLast = index === pricingData.length - 1;
+
+                // ステップ要素を生成
+                const stepEl = document.createElement('div');
+                stepEl.className = 'flex flex-col items-center text-center w-full md:w-auto';
+                stepEl.innerHTML = `
+                    <div class="flex-shrink-0 bg-blue-500 rounded-full w-16 h-16 flex items-center justify-center shadow-lg mb-3">
+                        ${data.icon}
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-700 text-md">${data.people}人目</p>
+                        <p class="text-2xl font-bold text-blue-600">${data.total.toLocaleString()}<span class="text-base font-medium">万円</span></p>
+                        <p class="text-xs text-gray-500">(1人あたり ${perPersonCost.toFixed(1).replace('.0', '')}万円)</p>
+                    </div>
+                `;
+                stepsContainer.appendChild(stepEl);
+
+                // 最後でなければコネクターを追加
+                if (!isLast) {
+                    const connector = document.createElement('div');
+                    connector.className = 'w-0.5 h-8 md:w-auto md:h-0.5 step-connector md:flex-grow mx-auto md:mx-0 md:self-center';
+                    stepsContainer.appendChild(connector);
+                }
+            });
+
+            // グラフのデータを準備
+            const labels = pricingData.map(d => `${d.people}人`);
+            const perPersonCosts = pricingData.map(d => (d.total / d.people).toFixed(1));
+
+            // 折れ線グラフを描画
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '1人あたりの料金 (万円)',
+                        data: perPersonCosts,
+                        borderColor: '#3b82f6', // blue-500
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.3, // 線の滑らかさ
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#3b82f6',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false // 凡例は非表示
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.formattedValue} 万円`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false, // Y軸の開始を0にしない
+                            title: {
+                                display: true,
+                                text: '料金 (万円)'
+                            }
+                        },
+                        x: {
+                             title: {
+                                display: true,
+                                text: 'ご紹介人数'
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
